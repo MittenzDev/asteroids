@@ -45,7 +45,7 @@ def main():
             for shot in shots:
                 if pygame.sprite.collide_rect(shot, asteroid):
                     shot.kill()
-                    asteroid.kill()
+                    asteroid.split()
 
         if running:
             screen.fill((0, 0, 0)) # fill screen with black
