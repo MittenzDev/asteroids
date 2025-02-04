@@ -1,11 +1,13 @@
 from circleshape import CircleShape
 import pygame
 import constants
+from shot import Shot
 
 class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, constants.PLAYER_RADIUS)
         self.rotation = 0
+        self.space_pressed = False
 
     def draw(self, screen):
         pygame.draw.polygon(screen, (255, 255, 255), self.triangle(), width = 2)
@@ -13,9 +15,15 @@ class Player(CircleShape):
     def rotate(self, dt):
         self.rotation = self.rotation + (constants.PLAYER_TURN_SPEED * dt)
         self.rotation %= 360 # constrains self.rotation to always be between 0 and 360
+    
+    def shoot(self):
+        velocity = pygame.Vector2(0, 1).rotate(self.rotation)
+        velocity *= constants.PLAYER_SHOOT_SPEED
+        return Shot(self.position.x, self.position.y, velocity)
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
+        shot = None
 
         if keys[pygame.K_a]:
             self.rotate(dt)
@@ -25,6 +33,13 @@ class Player(CircleShape):
             self.move(dt)
         if keys[pygame.K_s]:
             self.move(-dt)
+        if keys[pygame.K_SPACE]:
+            if not self.space_pressed:
+                shot = self.shoot()
+                self.space_pressed = True
+        else:
+            self.space_pressed = False
+        return shot
 
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
