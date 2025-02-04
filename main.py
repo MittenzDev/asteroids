@@ -42,6 +42,11 @@ def main():
             if player.collision(asteroid):
                 running = False # stop the main game loop
                 break # exit the asteroid checking loop
+            for shot in shots:
+                if pygame.sprite.collide_rect(shot, asteroid):
+                    shot.kill()
+                    asteroid.kill()
+
         if running:
             screen.fill((0, 0, 0)) # fill screen with black
             for sprite in drawable:
